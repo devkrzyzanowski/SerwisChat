@@ -99,7 +99,7 @@
             this.zapiszToolStripMenuItem,
             this.wyczyśćToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(120, 48);
             // 
             // zapiszToolStripMenuItem
             // 
@@ -130,6 +130,7 @@
             this.textBox1.Size = new System.Drawing.Size(359, 102);
             this.textBox1.TabIndex = 6;
             this.textBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyUp);
+            this.textBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseUp);
             // 
             // button2
             // 
