@@ -12,6 +12,7 @@ namespace SerwisChat
 {
     public partial class Form1 : Form
     {
+        private int cursorPosition = 0;
         public Form1()
         {
             InitializeComponent();
@@ -45,6 +46,29 @@ namespace SerwisChat
         private void label2_Click(object sender, EventArgs e)
         {
 
+        }
+        private void enterBoldTag(string tag)
+        {
+            string text = textBox1.Text;
+            textBox1.Text = text.Insert(cursorPosition, tag);
+            textBox1.Focus();
+            if (tag == "<br>" || tag == "<hr>")
+            {
+                textBox1.Select(cursorPosition + tag.Length, 0);
+                cursorPosition += tag.Length;
+            } else
+            {
+                textBox1.Select(cursorPosition + tag.Length / 2, 0);
+                cursorPosition += tag.Length / 2;
+            }
+        }
+        private void textBox1_KeyUp(object sender, KeyEventArgs e)
+        {
+            cursorPosition = textBox1.SelectionStart;
+        }
+        private void textBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            cursorPosition = textBox1.SelectionStart;
         }
 
     }
