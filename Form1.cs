@@ -20,7 +20,12 @@ namespace SerwisChat
 
         private void button3_Click(object sender, EventArgs e)
         {
+            enterTag("<b></b>");
+        }
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+            enterTag("<i></i>");
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -47,7 +52,7 @@ namespace SerwisChat
         {
 
         }
-        private void enterBoldTag(string tag)
+        private void enterTag(string tag)
         {
             string text = textBox1.Text;
             textBox1.Text = text.Insert(cursorPosition, tag);
@@ -71,5 +76,24 @@ namespace SerwisChat
             cursorPosition = textBox1.SelectionStart;
         }
 
+        private void wyczyśćToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.webBrowser1.Navigate("about:blank");
+        }
+
+        private void zapiszToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                using ( System.IO.StreamWriter sw = new System.IO.StreamWriter(saveFileDialog1.FileName))
+                    try
+                    {
+                        sw.Write(webBrowser1.DocumentText);
+                    } catch
+                    {
+                        MessageBox.Show("Nie można zapisać pliku: " + saveFileDialog1.FileName);
+                    }
+            }
+        }
     }
 }
