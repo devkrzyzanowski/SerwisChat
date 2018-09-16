@@ -1,0 +1,10 @@
+C:\Users\Admin\Documents\CSharp\SerwisChat\SerwisChat\bin\Debug\SerwisChat.exe.config
+C:\Users\Admin\Documents\CSharp\SerwisChat\SerwisChat\bin\Debug\SerwisChat.exe
+C:\Users\Admin\Documents\CSharp\SerwisChat\SerwisChat\bin\Debug\SerwisChat.pdb
+C:\Users\Admin\Documents\CSharp\SerwisChat\SerwisChat\obj\Debug\SerwisChat.csprojAssemblyReference.cache
+C:\Users\Admin\Documents\CSharp\SerwisChat\SerwisChat\obj\Debug\SerwisChat.Form1.resources
+C:\Users\Admin\Documents\CSharp\SerwisChat\SerwisChat\obj\Debug\SerwisChat.Properties.Resources.resources
+C:\Users\Admin\Documents\CSharp\SerwisChat\SerwisChat\obj\Debug\SerwisChat.csproj.GenerateResource.cache
+C:\Users\Admin\Documents\CSharp\SerwisChat\SerwisChat\obj\Debug\SerwisChat.csproj.CoreCompileInputs.cache
+C:\Users\Admin\Documents\CSharp\SerwisChat\SerwisChat\obj\Debug\SerwisChat.exe
+C:\Users\Admin\Documents\CSharp\SerwisChat\SerwisChat\obj\Debug\SerwisChat.pdb
