@@ -22,15 +22,18 @@ namespace SerwisChat {
         private BinaryWriter bWriter = null;
         private bool activeConnection = false;
         private int cursorPosition = 0;
+        private Boolean connectionType = false;
 
         public Form1() {
             InitializeComponent();
             webBrowser1.Navigate("about:blank");
+
             webBrowser1.Document.Write("<html><head><style>body,table { font-size: 10pt; font-family: Verdana; margin: 3px 3px 3px 3px; font-color: black;}</style></head><body width=\"" + (webBrowser1.ClientSize.Width
             - 20).ToString() + "\">");
             IPHostEntry adresyIP = Dns.GetHostEntry(Dns.GetHostName());
             foreach (IPAddress position in adresyIP.AddressList)
             comboBox1.Items.Add(position.ToString());
+            
         }
 
         private void ComboBox1_TextChanged(object sender, EventArgs e) {
@@ -82,11 +85,15 @@ namespace SerwisChat {
                 SetScrollCallBack s = new SetScrollCallBack(SetScroll);
                 this.Invoke(s);
             } else {
-                this.webBrowser1.Document.Window.ScrollTo(1, Int32.MaxValue);
+                int h = this.webBrowser1.Document.Window.Size.Height;
+                this.webBrowser1.Document.Window.ScrollTo(0, h);    
             }
         }
         private void WpiszTekst(string kto, string wiadomosc) {
-            SetTextHTML("<table><tr><td width=\"10%\"><b>" + kto + "</b></td><td width=\"90%\">(" + DateTime.Now.ToShortTimeString() + "):</td></tr>"); SetTextHTML("<tr><td colspan=2>" + wiadomosc + "</td></tr></table>"); SetTextHTML("<hr>"); SetScroll();
+            SetTextHTML("<table><tr><td width=\"10%\"><b>" + kto + "</b></td><td width=\"90%\">(" + DateTime.Now.ToShortTimeString() + "):</td></tr>"); SetTextHTML("<tr><td colspan=2>" + wiadomosc + "</td></tr></table>");
+            SetTextHTML("<hr>");
+
+            SetScroll();
         }
 
         private void TextBox1_KeyUp(object sender, KeyEventArgs e) {
@@ -120,28 +127,46 @@ namespace SerwisChat {
                 activeConnection = false;
                 return;
             }
-            serwer = new TcpListener(serwerIP, (int)numericUpDown1.Value);
-            try {
-                serwer.Start();
-                SetText("Oczekuje na połączenie ...");
-                client = serwer.AcceptTcpClient();
-                NetworkStream ns = client.GetStream();
-                SetText("Klient próbuje się połączyć");
-                bReader = new BinaryReader(ns);
-                bWriter = new BinaryWriter(ns);
-                if (bReader.ReadString() == "###HI###") {
-                    SetText("Klient połączony");
-                    backgroundWorker2.RunWorkerAsync();
-                } else {
-                    SetText("Klient nie wykonał wymaganej autoryzacji. Połączenie przerwane");
-                    client.Close();
-                    serwer.Stop();
+            if (!connectionType) // type server
+            {
+                serwer = new TcpListener(serwerIP, (int)numericUpDown1.Value);
+                try
+                {
+                    serwer.Start();
+                    SetText("Oczekuje na połączenie ...");
+                    client = serwer.AcceptTcpClient();
+                    NetworkStream ns = client.GetStream();
+                    SetText("Klient próbuje się połączyć");
+                    bReader = new BinaryReader(ns);
+                    bWriter = new BinaryWriter(ns);
+                    if (bReader.ReadString() == "###HI###")
+                    {
+                        SetText("Klient połączony");
+                        backgroundWorker2.RunWorkerAsync();
+                    }
+                    else
+                    {
+                        SetText("Klient nie wykonał wymaganej autoryzacji. Połączenie przerwane");
+                        //client.Close();
+                        serwer.Stop();
+                        activeConnection = false;
+                    }
+                }
+                catch (Exception edd)
+                {
+                    SetText("Połączenie zostało przerwane");
+                    MessageBox.Show(edd.ToString());
                     activeConnection = false;
                 }
-            } catch (Exception edd){
-                SetText("Połączenie zostało przerwane");
-                MessageBox.Show(edd.ToString());
-                activeConnection = false;
+            } else { //type client
+                SetText("Oczekuje na polaczenie ...");
+                client = new TcpClient();
+                client.Connect(serwerIP, 33);
+                NetworkStream ns = client.GetStream();
+                bReader = new BinaryReader(ns);
+                bWriter = new BinaryWriter(ns);
+                bWriter.Write("###HI###");
+                backgroundWorker2.RunWorkerAsync();
             }
         }
 
@@ -150,28 +175,23 @@ namespace SerwisChat {
             try {
                 while ((wiadomosc = bReader.ReadString()) != "###BYE###") {
                     WpiszTekst("ktoś", wiadomosc);
+                    
                 }
                 client.Close();
                 serwer.Stop();
                 SetText("Połączenie zostało przerwane przez klienta");
-            } catch {
-                SetText("Klient rozłączony");
+            } catch (Exception xe){
+                
+                SetText(xe.Message);
                 activeConnection = false;
                 client.Close();
                 serwer.Stop();
             }
+
         }
         private void Button1_Click(object sender, EventArgs e) {
-            if (activeConnection == false) {
-                activeConnection = true;
-                backgroundWorker1.RunWorkerAsync();
-            } else {
-                activeConnection = false;
-                if (client != null) client.Close();
-                serwer.Stop();
-                backgroundWorker1.CancelAsync();
-                if (backgroundWorker2.IsBusy) backgroundWorker2.CancelAsync();
-            }
+            connectionType = false;
+            connect();
         }
         private void Button2_Click(object sender, EventArgs e) {
             WpiszTekst("ja", textBox1.Text);
@@ -180,6 +200,29 @@ namespace SerwisChat {
         }
         private void TextBox1_KeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == (char)13) this.Button2_Click(sender, e);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            connectionType = true;
+            connect();
+        }
+
+        private void connect()
+        {
+            if (activeConnection == false)
+            {
+                activeConnection = true;
+                backgroundWorker1.RunWorkerAsync();
+            }
+            else
+            {
+                activeConnection = false;
+                if (client != null) client.Close();
+                serwer.Stop();
+                backgroundWorker1.CancelAsync();
+                if (backgroundWorker2.IsBusy) backgroundWorker2.CancelAsync();
+            }
         }
     }
 }
